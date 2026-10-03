@@ -37,20 +37,34 @@ args = parser.parse_args()
 if args.command == "get":
     data = get_todo(args.id)
 
-    print(data["title"])
+    if data is None:
+        print("TODOを取得できませんでした")
+    else:
+        print(data["title"])
+
 elif args.command == "list":
     data = get_todos(args.limit)
 
-    for todo in data:
-        print(f"{todo["id"]}: {todo["title"]}")
+    if data is None:
+        print("TODOを取得できませんでした")
+    else:
+        for todo in data:
+            print(f"{todo["id"]}: {todo["title"]}")
 elif args.command == "add":
     data = add_todo(args.title)
 
-    print(f"{data["id"]}: {data["title"]}")
+    if data is None:
+        print("TODOを追加できませんでした")
+    else:
+        print(f"{data["id"]}: {data["title"]}")
 elif args.command == "done":
     data  = complete_todo(args.id)
 
-    print(F"{data["id"]}: 完了しました")
+    if data is None:
+        print("TODOを更新できませんでした")
+    else:
+        print(f"{data["id"]}: 完了しました")
+
 elif args.command == "delete":
     res = delete_todo(args.id)
 

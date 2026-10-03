@@ -12,6 +12,7 @@ def get_todo(todo_id):
         response = requests.get(url)
     except requests.exceptions.RequestException:
         print("APIへの接続に失敗しました")
+        return None
 
     if response.status_code == 200:
         data = response.json()
@@ -27,17 +28,13 @@ def get_todos(limit):
     }
     
     try:
-        # if limit:
-        #     params = {"_limit": limit}
-        # else:
-        #     params = None
-
         params = {"_limit": limit} if limit else None
 
         response = requests.get(url, params=params, headers=headers)
 
     except requests.exceptions.RequestException:
         print("APIへの接続に失敗しました")
+        return None
 
     if response.status_code == 200:
         data = response.json()
@@ -59,6 +56,7 @@ def add_todo(title):
         response = requests.post(url, json=todo)
     except requests.exceptions.RequestException:
         print("APIへの接続に失敗しました")
+        return None
     
     if response.status_code == 201:
         data = response.json()
@@ -73,7 +71,11 @@ def complete_todo(todo_id):
         "completed": True
     }
 
-    response = requests.put(url, json=todo)
+    try:
+        response = requests.put(url, json=todo)
+    except requests.exceptions.RequestException:
+        print("APIへの接続に失敗しました")
+        return None
 
     if response.status_code == 200:
         data = response.json()
@@ -83,10 +85,16 @@ def complete_todo(todo_id):
 
 def delete_todo(todo_id):
     url = f"https://jsonplaceholder.typicode.com/todos/{todo_id}"
+    try:
+        response = requests.delete(url)
+        print(response.status_code)
+        print(response.text)
 
-    response = requests.delete(url)
-
-    if response.status_code == 204:
+    except requests.exceptions.RequestException:
+        print("APIへの接続に失敗しました")
+        return False
+    
+    if response.status_code == 200:
         return True
     else:
         return False

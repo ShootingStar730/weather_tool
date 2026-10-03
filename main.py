@@ -1,5 +1,6 @@
 import argparse
 import requests
+
 from method import get_todo
 from method import get_todos
 from method import add_todo
@@ -16,6 +17,7 @@ get_parser.add_argument("id", type=int)
 get_parser.set_defaults(command="get")
 
 list_parser = subparsers.add_parser("list")
+list_parser.add_argument("--limit", type=int)
 list_parser.set_defaults(command="list")
 
 add_parser = subparsers.add_parser("add")
@@ -37,7 +39,7 @@ if args.command == "get":
 
     print(data["title"])
 elif args.command == "list":
-    data = get_todos()
+    data = get_todos(args.limit)
 
     for todo in data:
         print(f"{todo["id"]}: {todo["title"]}")

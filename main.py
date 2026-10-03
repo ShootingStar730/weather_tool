@@ -1,20 +1,10 @@
-import requests
 import argparse
-
-
-def get_todo(todo_id):
-    url = f"https://jsonplaceholder.typicode.com/todos/{todo_id}"
-
-    try:
-        response = requests.get("https://jsonplaceholder.typicode.com/todos")
-    except requests.exceptions.RequestException:
-        print("APIへの接続に失敗しました")
-
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        print("APIからデータを取得できませんでした")
+import requests
+from method import get_todo
+from method import get_todos
+from method import add_todo
+from method import complete_todo
+from method import delete_todo
 
 parser = argparse.ArgumentParser()
 # parser.add_argument("id", type=int)
@@ -28,9 +18,46 @@ get_parser.set_defaults(command="get")
 list_parser = subparsers.add_parser("list")
 list_parser.set_defaults(command="list")
 
+add_parser = subparsers.add_parser("add")
+add_parser.add_argument("title")
+add_parser.set_defaults(command="add")
+
+done_parser = subparsers.add_parser("done")
+done_parser.add_argument("id", type=int)
+done_parser.set_defaults(command="done")
+
+delete_parser = subparsers.add_parser("delete")
+delete_parser.add_argument("id", type=int)
+delete_parser.set_defaults(command="delete")
+
 args = parser.parse_args()
 
-print(args)
+if args.command == "get":
+    data = get_todo(args.id)
+
+    print(data["title"])
+elif args.command == "list":
+    data = get_todos()
+
+    for todo in data:
+        print(f"{todo["id"]}: {todo["title"]}")
+elif args.command == "add":
+    data = add_todo(args.title)
+
+    print(f"{data["id"]}: {data["title"]}")
+elif args.command == "done":
+    data  = complete_todo(args.id)
+
+    print(F"{data["id"]}: 完了しました")
+elif args.command == "delete":
+    res = delete_todo(args.id)
+
+    if res:
+        print(f"{args.id}: 削除しました")
+    else:
+        print("TODOの削除に失敗しました")
+
+# print(args)
 
 # data = get_todo(args.id)
 
